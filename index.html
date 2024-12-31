@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Section</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-white to-gray-50">
+        <div class="container px-4 md:px-6 mx-auto">
+            <!-- Features Grid -->
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-2 mb-12 relative">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="mb-4">
+                        <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 6V12M12 12V18M12 12H18M12 12H6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Intelligent Personalization</h3>
+                    <p class="text-gray-600">Our platform employs advanced machine learning algorithms to understand user preferences, delivering personalized content and recommendations.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="mb-4">
+                        <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 10V3L4 14H11V21L20 10H13Z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Seamless Integration</h3>
+                    <p class="text-gray-600">Our user-friendly interface ensures a smooth experience, allowing you to harness the power of AI without a steep learning curve.</p>
+                </div>
+
+                <!-- Card 3 (Centered below) -->
+                <div class="bg-white rounded-lg shadow-lg p-6 md:col-span-2 md:w-2/3 md:mx-auto">
+                    <div class="mb-4">
+                        <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 19V13M9 13V5M9 13H15M15 13V5M15 13V19" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Data-driven Insights</h3>
+                    <p class="text-gray-600">Gain valuable insights into user behavior, model performance, and more. Our platform provides actionable data to refine your machine learning models.</p>
+                </div>
+            </div>
+
+            <!-- Monitor and Manage Section -->
+            <div class="bg-gray-50 rounded-lg p-6 md:p-8 lg:p-12">
+                <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12">
+                    Monitor and manage models, from small teams to massive scale
+                </h2>
+                
+                <div class="space-y-4" id="accordion">
+                    <!-- Steps will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const steps = [
+            {
+                number: "01",
+                title: "Easy to Integrate",
+                description: "Add two lines of code to your notebook or script and automatically start tracking code, hyperparameters, metrics, and more, so you can compare and reproduce training runs."
+            },
+            {
+                number: "02",
+                title: "Track and share experiments",
+                description: "Monitor and analyze your experiments in real-time with comprehensive dashboards and detailed metrics tracking."
+            },
+            {
+                number: "03",
+                title: "Build your own visualizations",
+                description: "Create custom dashboards and visualizations tailored to your specific needs."
+            }
+        ];
+
+        let activeStepIndex = 0;
+        let progressInterval;
+        let progress = 0;
+
+        function createAccordion() {
+            const accordion = document.getElementById('accordion');
+            accordion.innerHTML = steps.map((step, index) => `
+                <div class="border-b border-gray-200 last:border-0" data-step="${index}">
+                    <button class="w-full py-4 flex items-start justify-between text-left ${index === 0 ? 'active' : ''}" onclick="toggleStep(${index})">
+                        <div class="flex items-center gap-4">
+                            <span class="text-blue-600 font-semibold">${step.number}.</span>
+                            <span class="font-semibold">${step.title}</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform ${index === 0 ? 'rotate-180' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="overflow-hidden transition-all duration-300 ${index === 0 ? 'max-h-40' : 'max-h-0'}">
+                        <div class="p-4 pl-12">
+                            <p class="text-gray-600 mb-4">${step.description}</p>
+                            <div class="h-1 bg-gray-200 rounded">
+                                <div class="progress-bar h-full bg-blue-600 rounded transition-all duration-100" style="width: ${index === 0 ? '0%' : '0%'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            startProgress();
+        }
+
+        function toggleStep(index) {
+            const accordionItems = document.querySelectorAll('[data-step]');
+            const buttons = document.querySelectorAll('button');
+            const arrows = document.querySelectorAll('svg');
+            
+            accordionItems.forEach((item, i) => {
+                const content = item.querySelector('div[class*="overflow-hidden"]');
+                const isSelected = i === index;
+                
+                content.classList.toggle('max-h-0', !isSelected);
+                content.classList.toggle('max-h-40', isSelected);
+                buttons[i].classList.toggle('active', isSelected);
+                arrows[i].classList.toggle('rotate-180', isSelected);
+            });
+
+            if (activeStepIndex !== index) {
+                resetProgress();
+                activeStepIndex = index;
+            }
+        }
+
+        function startProgress() {
+            clearInterval(progressInterval);
+            progress = 0;
+            
+            progressInterval = setInterval(() => {
+                progress += 0.5;
+                updateProgressBar();
+                
+                if (progress >= 100) {
+                    const nextStep = (activeStepIndex + 1) % steps.length;
+                    toggleStep(nextStep);
+                    progress = 0;
+                }
+            }, 100);
+        }
+
+        function resetProgress() {
+            progress = 0;
+            updateProgressBar();
+            startProgress();
+        }
+
+        function updateProgressBar() {
+            const activeProgressBar = document.querySelector(`[data-step="${activeStepIndex}"] .progress-bar`);
+            if (activeProgressBar) {
+                activeProgressBar.style.width = `${progress}%`;
+            }
+        }
+
+        // Initialize accordion
+        document.addEventListener('DOMContentLoaded', createAccordion);
+    </script>
+
+    <style>
+        .active {
+            color: rgb(37 99 235); /* blue-600 */
+        }
+    </style>
+</body>
+</html>
